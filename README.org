@@ -1,0 +1,66 @@
+* Assumptions
+- Its said that server will send the buffer to some another destination so I just printined that the buffer has been send to destination server.
+- The client is generating random logs.
+- For that I has created some string slices and pick their random combinations regarding the random logs generation.
+* How to run the code ?
+- For that part please install the "Golang" compiler.
+
+** To run the server
+- Just go inside the "server" directory and run this command:
+  #+begin_src shell
+go run server.go
+  #+end_src
+
+** To run the client
+- Just go inside the "client" directory and run this command:
+  #+begin_src shell
+go run client.go
+  #+end_src
+
+** SOME POINTS
+- They both can run independent from each other
+- Client will only and only generate the logs when connected to the server.
+- Server is by default I connected to the port *":8080"*
+- I made this assignment in *ARCH LINUX + GNU/Emacs* so if you are using any linux distribution check port ":8080" should be free using this command below:
+  #+begin_src shell
+sudo lsof -i :8080
+  #+end_src
+
+- If the above command returns nothing then your port is free otherwise use kill command etc to kill the process thats taking the port.
+* Client
+- It can try to reconnecting to the server after some time (let say after 5 secs) till the server is reached
+- Here below is the screenshot regarding the same:
+
+  [[./screenshots/client_without_server.jpg]]
+
+
+- Its also generating random logs after some time intervals only and only if the server is connected. Screenshots are as below
+  [[./screenshots/client_join_server_with_logs.jpg]]
+
+* Server
+- It can handle incoming logs and store them in a buffer
+- For simulating the buffer:
+  I used the "struct" to get a slice of string along with mutex to restrict the race condition(if any):
+
+  #+begin_src go
+type Server struct {
+	buffer     []string
+	bufferLock sync.Mutex
+}
+  #+end_src
+
+- Server settings can be changed from this code snippet below:
+  #+begin_src go
+const (
+	batchSize      = 100
+	flushInterval  = 10 * time.Second
+	serverAddress  = "localhost:8080" // Its for the server addresss
+	//	destServerAddr = "localhost:9090" // Destination server address + port number defined here [IDK WHAT WOULD BE THE DESTINATIONS SERVER !!!]
+)
+  #+end_src
+
+- Server and Client running together:
+  [[./screenshots/client_server_together.jpg]]
+
+* What I didnt done?
+- Idk how to use elasticsearch in very limited time and idk what it needs to search in the buffer of server.
